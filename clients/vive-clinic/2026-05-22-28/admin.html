@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="th"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VIVE Clinic - Admin Performance Dashboard</title><link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet"><style>
+        /* Modern Reset & Self-contained Styles (same layout as Wonder old report) */
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Prompt', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            background-color: #fbf7f4;
+            color: #2b1d18;
+            line-height: 1.6;
+            padding-bottom: 50px;
+        }
+        .banner {
+            background: linear-gradient(135deg, #2a1712 0%, #5a2f24 50%, #9b5a45 100%);
+            color: #ffffff;
+            padding: 32px 24px;
+            border-bottom-left-radius: 24px;
+            border-bottom-right-radius: 24px;
+            box-shadow: 0 10px 30px -10px rgba(73, 36, 24, 0.32);
+            margin-bottom: 24px;
+        }
+        .banner-subtitle { font-size: 11px; text-transform: uppercase; letter-spacing: 1.5px; color: #ffd6c8; font-weight: 600; margin-bottom: 6px; }
+        .banner-title { font-size: 20px; font-weight: 700; line-height: 1.3; margin-bottom: 12px; }
+        .banner-desc { font-size: 12px; color: #ffe8de; font-weight: 300; margin-bottom: 16px; }
+        .banner-tags { display: flex; flex-wrap: wrap; gap: 8px; }
+        .tag { background-color: rgba(255,255,255,0.12); padding: 4px 10px; border-radius: 6px; font-size: 10px; color: #fff7f2; }
+        .container { max-width: 600px; margin: 0 auto; padding: 0 16px; }
+        .card { background-color: #ffffff; border: 1px solid #eadbd3; border-radius: 16px; padding: 16px; margin-bottom: 16px; box-shadow: 0 4px 6px -1px rgba(73,36,24,.06); display: flex; align-items: center; justify-content: space-between; }
+        .card-content { display: flex; flex-direction: column; }
+        .card-label { font-size: 10px; text-transform: uppercase; color: #8a746b; font-weight: 600; letter-spacing: .5px; margin-bottom: 4px; }
+        .card-value { font-size: 22px; font-weight: 700; color: #2a1712; }
+        .card-subtext { font-size: 10px; color: #9b5a45; font-weight: 500; margin-top: 2px; }
+        .card-subtext.green { color: #16835a; }
+        .icon-container { width: 44px; height: 44px; border-radius: 12px; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+        .icon-blue { background-color: #fff1eb; color: #9b5a45; }
+        .icon-indigo { background-color: #f9eee9; color: #7f3e2b; }
+        .icon-emerald { background-color: #ecfdf5; color: #10b981; }
+        .icon-teal { background-color: #f0fdfa; color: #14b8a6; }
+        .icon-orange { background-color: #fff7ed; color: #f97316; }
+        .icon-container svg { width: 22px !important; height: 22px !important; display:block; }
+        .section-title { font-size: 14px; font-weight: 700; color: #2a1712; margin: 24px 0 12px 0; display:flex; align-items:center; gap:8px; }
+        .title-indicator { width: 4px; height: 16px; background-color: #9b5a45; border-radius: 2px; }
+        .title-indicator.emerald { background-color: #10b981; }
+        .title-indicator.orange { background-color: #f97316; }
+        .title-indicator.red { background-color: #c44747; }
+        .table-card { background-color:#ffffff; border:1px solid #eadbd3; border-radius:16px; overflow:hidden; box-shadow:0 4px 6px -1px rgba(73,36,24,.06); margin-bottom:24px; }
+        .table-responsive { overflow-x:auto; }
+        table { width:100%; border-collapse:collapse; font-size:11px; text-align:center; }
+        th { background-color:#2a1712; color:#ffffff; font-weight:600; padding:10px 6px; }
+        td { padding:10px 6px; border-bottom:1px solid #f3e7e1; color:#604d45; vertical-align: top; }
+        tr.total-row { background-color:#fbf7f4; font-weight:700; color:#2a1712; border-top:2px solid #d8c2b7; }
+        .case-card { background-color:#ffffff; border:1px solid #eadbd3; border-radius:16px; padding:16px; margin-bottom:12px; box-shadow:0 2px 4px rgba(73,36,24,.03); }
+        .case-header { display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #f3e7e1; padding-bottom:8px; margin-bottom:8px; gap:8px; }
+        .case-name { font-size:12px; font-weight:600; color:#2a1712; }
+        .case-badge { background-color:#fee2e2; color:#b91c1c; padding:2px 8px; border-radius:4px; font-size:9px; font-weight:600; white-space:nowrap; }
+        .case-badge.good { background-color:#dcfce7; color:#15803d; }
+        .case-badge.warn { background-color:#fef3c7; color:#b45309; }
+        .case-detail { font-size:11px; color:#604d45; margin-bottom:4px; }
+        .case-solution { font-size:11px; color:#7f3e2b; background-color:#fff7f2; padding:6px 10px; border-radius:8px; margin-top:8px; font-weight:500; }
+        .footer { text-align:center; font-size:9px; color:#a08b82; margin-top:40px; padding-top:16px; border-top:1px solid #eadbd3; }
+
+        /* Responsive Web Design layer */
+        html { -webkit-text-size-adjust: 100%; }
+        .container { width: min(100% - 32px, 1040px); padding: 0; }
+        .metrics-grid { display: grid; grid-template-columns: 1fr; gap: 12px; margin-bottom: 16px; }
+        .metrics-grid .card { margin-bottom: 0; min-height: 112px; }
+        .table-responsive { width: 100%; -webkit-overflow-scrolling: touch; }
+        .table-responsive table { min-width: 560px; }
+        .case-card { overflow-wrap: anywhere; }
+        @media (min-width: 640px) {
+            .banner-title { font-size: 26px; }
+            .banner-desc { font-size: 14px; }
+            .metrics-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+            .case-detail { font-size: 12px; }
+        }
+        @media (min-width: 1024px) {
+            .banner { padding: 40px 24px; }
+            .metrics-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+            .content-grid-2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+        }
+        @media (max-width: 420px) {
+            .container { width: min(100% - 20px, 1040px); }
+            .banner { padding: 26px 16px; }
+            .card { padding: 14px; }
+            .card-value { font-size: 19px; }
+            .icon-container { width: 40px; height: 40px; }
+            .case-header { align-items: flex-start; flex-direction: column; }
+            .case-badge { white-space: normal; }
+        }
+
+</style></head><body>
+<div class="banner"><div class="container"><p class="banner-subtitle">VIVE Clinic Dashboard</p><h1 class="banner-title">รายงานประสิทธิภาพแอดมิน</h1><p class="banner-desc">สรุปคุณภาพการตอบแชตของ วีเว่ คลินิก สาขาสรงประภา จากการอ่านแชตจริงและกระทบยอดชีตจอง</p><div class="banner-tags"><span class="tag">📅 22 - 28 พ.ค. 2569</span><span class="tag">⏰ เวลาทำการ: 09:00 - 22:00 น.</span></div></div></div>
+<div class="container">
+<div class="section-title"><div class="title-indicator"></div><h2>สรุปผลลัพธ์สะสม (7 วัน)</h2></div>
+<div class="metrics-grid">
+<div class="card"><div class="card-content"><span class="card-label">ยอดแชตเข้าทั้งหมด</span><span class="card-value">167 <span style="font-size:12px; font-weight:400;">เคส</span></span><span class="card-subtext">อ่านจากประวัติแชตจริง</span></div><div class="icon-container icon-blue"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path></svg></div></div>
+<div class="card"><div class="card-content"><span class="card-label">แชตที่คุยจริง</span><span class="card-value">167 <span style="font-size:12px; font-weight:400;">เคส</span></span><span class="card-subtext">ใช้ประเมินคุณภาพหน้างาน</span></div><div class="icon-container icon-indigo"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path></svg></div></div>
+<div class="card"><div class="card-content"><span class="card-label">ยอดจองในชีต</span><span class="card-value">49 <span style="font-size:12px; font-weight:400;">เคส</span></span><span class="card-subtext green">อัตราจองจากแชตจริง 29.3%</span></div><div class="icon-container icon-emerald"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg></div></div>
+<div class="card"><div class="card-content"><span class="card-label">เวลาตอบเฉลี่ยในเวลางาน</span><span class="card-value">1.9 <span style="font-size:12px; font-weight:400;">นาที</span></span><span class="card-subtext">ค่ากลาง 0.6 นาที</span></div><div class="icon-container icon-orange"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg></div></div>
+</div>
+<div class="section-title"><div class="title-indicator emerald"></div><h2>ตารางสรุปผล Full-Funnel & SLA</h2></div>
+<div class="table-card"><div class="table-responsive"><table><thead><tr><th>หัวข้อ</th><th>ผลลัพธ์</th><th>ความหมาย</th></tr></thead><tbody>
+<tr><td style="font-weight:600;color:#2a1712;">แชตคุยจริง</td><td>167 เคส</td><td>ฐานข้อมูลที่อ่านและประเมินจริง</td></tr>
+<tr><td style="font-weight:600;color:#2a1712;">ยอดจอง</td><td style="color:#10b981;font-weight:600;">49 เคส</td><td>49 จาก 167 เคส = 29.3%</td></tr>
+<tr><td style="font-weight:600;color:#2a1712;">ยอดโอนมัดจำ</td><td style="color:#10b981;font-weight:600;">42 เคส</td><td>42 จาก 49 เคส = 85.7%; อีก 7 เคสชำระที่สาขา</td></tr>
+<tr><td style="font-weight:600;color:#2a1712;">ตอบช้าเกิน 30 นาที</td><td style="color:#10b981;font-weight:600;">0 เคส</td><td>0 จากข้อมูลที่วัดได้ = 0.0%</td></tr>
+<tr class="total-row"><td>สรุป</td><td>ตอบเร็วมาก</td><td>คอขวดหลักไม่ได้อยู่ที่ความเร็วแอดมิน แต่อยู่ที่การปิดหลังแจ้งโปรและการเก็บเบอร์ให้ครบ</td></tr>
+</tbody></table></div></div>
+<div class="section-title"><div class="title-indicator orange"></div><h2>กระทบยอดกับชีตปิดโอนจอง</h2></div>
+<div class="table-card"><div class="table-responsive"><table><thead><tr><th>รายการ</th><th>จำนวน</th><th>สัดส่วน</th></tr></thead><tbody>
+<tr><td>พบเลขท้ายเบอร์ในแชต</td><td style="font-weight:600;color:#10b981;">37 เคส</td><td>75.5%</td></tr>
+<tr><td>ยังไม่พบจากเลขท้ายเบอร์</td><td style="font-weight:600;color:#b45309;">12 เคส</td><td>24.5%</td></tr>
+<tr class="total-row"><td>รวมยอดจองในชีต</td><td>49 เคส</td><td>100%</td></tr>
+</tbody></table></div></div>
+<div class="section-title"><div class="title-indicator emerald"></div><h2>ตัวอย่างเคสที่ปิดดี</h2></div>
+<div class="case-card"><div class="case-header"><span class="case-name">Lucky Lucky</span><span class="case-badge good">ปิดจองได้</span></div><p class="case-detail"><strong>หลักฐานกระทบยอด:</strong> วันที่ 22/5/69 · เลขท้าย 6459</p><div class="case-solution">💡 ใช้เป็นตัวอย่างการเก็บข้อมูลในแชตและผูกกับชีตจอง</div></div><div class="case-card"><div class="case-header"><span class="case-name">ณัฐ ณัฐพสิษฐ์</span><span class="case-badge good">ปิดจองได้</span></div><p class="case-detail"><strong>หลักฐานกระทบยอด:</strong> วันที่ 22/5/69 · เลขท้าย 4096</p><div class="case-solution">💡 ใช้เป็นตัวอย่างการเก็บข้อมูลในแชตและผูกกับชีตจอง</div></div><div class="case-card"><div class="case-header"><span class="case-name">Storg Ppimmada Viewvi</span><span class="case-badge good">ปิดจองได้</span></div><p class="case-detail"><strong>หลักฐานกระทบยอด:</strong> วันที่ 22/5/69 · เลขท้าย 8535</p><div class="case-solution">💡 ใช้เป็นตัวอย่างการเก็บข้อมูลในแชตและผูกกับชีตจอง</div></div><div class="case-card"><div class="case-header"><span class="case-name">Phatthicha Siri</span><span class="case-badge good">ปิดจองได้</span></div><p class="case-detail"><strong>หลักฐานกระทบยอด:</strong> วันที่ 23/5/69 · เลขท้าย 2269</p><div class="case-solution">💡 ใช้เป็นตัวอย่างการเก็บข้อมูลในแชตและผูกกับชีตจอง</div></div><div class="case-card"><div class="case-header"><span class="case-name">Nattsu Suetrong</span><span class="case-badge good">ปิดจองได้</span></div><p class="case-detail"><strong>หลักฐานกระทบยอด:</strong> วันที่ 24/5/69 · เลขท้าย 9195</p><div class="case-solution">💡 ใช้เป็นตัวอย่างการเก็บข้อมูลในแชตและผูกกับชีตจอง</div></div>
+<div class="section-title"><div class="title-indicator red"></div><h2>เหตุผลที่ยังไม่ตัดสินใจโอนจอง 5 ประเด็น</h2></div>
+<div class="case-card"><div class="case-header"><span class="case-name">ถามราคาและรายละเอียดโปรก่อนตัดสินใจ</span><span class="case-badge warn">ต้องติดตาม</span></div><p class="case-detail">พบจำนวนมากในแชตที่เริ่มจากโฆษณา ลูกค้ามักถามความคุ้มค่าและรายการที่รวมในโปร</p></div><div class="case-card"><div class="case-header"><span class="case-name">ต้องการเช็กคิวหรือความสะดวกก่อนโอน</span><span class="case-badge warn">ต้องติดตาม</span></div><p class="case-detail">มีลูกค้าถามวันและเวลาว่างก่อน เช่น เสาร์/อาทิตย์หรือช่วงเย็น</p></div><div class="case-card"><div class="case-header"><span class="case-name">กังวลเรื่องความเจ็บและขั้นตอนรักษา</span><span class="case-badge warn">ต้องติดตาม</span></div><p class="case-detail">พบคำถามเรื่องเจ็บ กลัวเข็ม และความกังวลก่อนเข้ารับบริการ</p></div><div class="case-card"><div class="case-header"><span class="case-name">ย้ายไปชำระที่สาขา</span><span class="case-badge warn">ต้องติดตาม</span></div><p class="case-detail">ในชีตมี 7 จาก 49 เคส หรือ 14.3% ที่ระบุชำระที่สาขา</p></div><div class="case-card"><div class="case-header"><span class="case-name">ข้อมูลเบอร์ในแชตไม่ครบหรือปิดการขายข้ามช่องทาง</span><span class="case-badge warn">ต้องติดตาม</span></div><p class="case-detail">มียอดจอง 12 จาก 49 เคส หรือ 24.5% ที่ยังไม่พบเลขท้ายเบอร์ในแชตที่ดึงได้</p></div>
+<div class="section-title"><div class="title-indicator orange"></div><h2>ตัวอย่างจากแชตจริง</h2></div>
+<div class="case-card"><div class="case-header"><span class="case-name">Lucky Lucky</span><span class="case-badge warn">22/05/26 02:55</span></div><p class="case-detail"><strong>ประเด็น:</strong> ราคา/โปรโมชัน — ลูกค้าตอบกลับโฆษณาและสนใจโปร จึงควรสรุปโปรให้สั้นแล้วถามวันนัดทันที</p></div>
+<div class="case-card"><div class="case-header"><span class="case-name">Aum Duangporn Detphukaew</span><span class="case-badge warn">22/05/26 21:42</span></div><p class="case-detail"><strong>ประเด็น:</strong> ขอคิดก่อน/เช็กคิว — ลูกค้าถามวันเสาร์และเวลาว่าง ควรเสนอคิว 2–3 ช่วงเพื่อเร่งตัดสินใจ</p></div>
+<div class="case-card"><div class="case-header"><span class="case-name">ไม่ดี ไม่จำ</span><span class="case-badge warn">24/05/26 16:28</span></div><p class="case-detail"><strong>ประเด็น:</strong> กลัวเจ็บ/กังวล — ควรใช้สคริปต์ลดความกังวลและชวนปรึกษาหน้างานแบบไม่กดดัน</p></div>
+<div class="section-title"><div class="title-indicator emerald"></div><h2>แผนปฏิบัติการสำหรับทีมแอดมิน</h2></div>
+<div class="case-card"><p class="case-detail">✅ สรุปโปรแบบสั้น 3 บรรทัด แล้วถามปิดคิวทันทีว่า “สะดวกเข้าวันไหนคะ”</p></div><div class="case-card"><p class="case-detail">✅ หลังแจ้งราคา ให้ส่งตัวเลือกเวลาคิว 2–3 ช่วงแทนการรอให้ลูกค้าคิดเอง</p></div><div class="case-card"><p class="case-detail">✅ เคสกลัวเจ็บ ให้มีสคริปต์ลดความกังวลและชวนปรึกษาหน้างานแบบไม่กดดัน</p></div><div class="case-card"><p class="case-detail">✅ ขอเบอร์โทรทุกเคสก่อนย้ายไปช่องทางอื่น เพื่อให้กระทบยอดไม่หล่น</p></div><div class="case-card"><p class="case-detail">✅ เคสชำระที่สาขาให้ติดป้ายในชีตให้ชัด เพื่อแยกจากเคสยังไม่โอน</p></div>
+<div class="footer"><p>หมายเหตุ: รายงานนี้อ่านจากประวัติแชตจริง กระทบยอดกับชีตปิดโอนจอง และข้อมูลหลังบ้านโฆษณาในช่วงวันที่กำหนด</p><p style="margin-top:4px;">© 2026 VIVE Clinic. LEO REPORT SYSTEM</p></div>
+</div></body></html>

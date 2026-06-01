@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="th"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VIVE Clinic - Ads Performance Dashboard</title><link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet"><style>
+        /* Modern Reset & Self-contained Styles (same layout as Wonder old report) */
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Prompt', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            background-color: #fbf7f4;
+            color: #2b1d18;
+            line-height: 1.6;
+            padding-bottom: 50px;
+        }
+        .banner {
+            background: linear-gradient(135deg, #2a1712 0%, #5a2f24 50%, #9b5a45 100%);
+            color: #ffffff;
+            padding: 32px 24px;
+            border-bottom-left-radius: 24px;
+            border-bottom-right-radius: 24px;
+            box-shadow: 0 10px 30px -10px rgba(73, 36, 24, 0.32);
+            margin-bottom: 24px;
+        }
+        .banner-subtitle { font-size: 11px; text-transform: uppercase; letter-spacing: 1.5px; color: #ffd6c8; font-weight: 600; margin-bottom: 6px; }
+        .banner-title { font-size: 20px; font-weight: 700; line-height: 1.3; margin-bottom: 12px; }
+        .banner-desc { font-size: 12px; color: #ffe8de; font-weight: 300; margin-bottom: 16px; }
+        .banner-tags { display: flex; flex-wrap: wrap; gap: 8px; }
+        .tag { background-color: rgba(255,255,255,0.12); padding: 4px 10px; border-radius: 6px; font-size: 10px; color: #fff7f2; }
+        .container { max-width: 600px; margin: 0 auto; padding: 0 16px; }
+        .card { background-color: #ffffff; border: 1px solid #eadbd3; border-radius: 16px; padding: 16px; margin-bottom: 16px; box-shadow: 0 4px 6px -1px rgba(73,36,24,.06); display: flex; align-items: center; justify-content: space-between; }
+        .card-content { display: flex; flex-direction: column; }
+        .card-label { font-size: 10px; text-transform: uppercase; color: #8a746b; font-weight: 600; letter-spacing: .5px; margin-bottom: 4px; }
+        .card-value { font-size: 22px; font-weight: 700; color: #2a1712; }
+        .card-subtext { font-size: 10px; color: #9b5a45; font-weight: 500; margin-top: 2px; }
+        .card-subtext.green { color: #16835a; }
+        .icon-container { width: 44px; height: 44px; border-radius: 12px; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+        .icon-blue { background-color: #fff1eb; color: #9b5a45; }
+        .icon-indigo { background-color: #f9eee9; color: #7f3e2b; }
+        .icon-emerald { background-color: #ecfdf5; color: #10b981; }
+        .icon-teal { background-color: #f0fdfa; color: #14b8a6; }
+        .icon-orange { background-color: #fff7ed; color: #f97316; }
+        .icon-container svg { width: 22px !important; height: 22px !important; display:block; }
+        .section-title { font-size: 14px; font-weight: 700; color: #2a1712; margin: 24px 0 12px 0; display:flex; align-items:center; gap:8px; }
+        .title-indicator { width: 4px; height: 16px; background-color: #9b5a45; border-radius: 2px; }
+        .title-indicator.emerald { background-color: #10b981; }
+        .title-indicator.orange { background-color: #f97316; }
+        .title-indicator.red { background-color: #c44747; }
+        .table-card { background-color:#ffffff; border:1px solid #eadbd3; border-radius:16px; overflow:hidden; box-shadow:0 4px 6px -1px rgba(73,36,24,.06); margin-bottom:24px; }
+        .table-responsive { overflow-x:auto; }
+        table { width:100%; border-collapse:collapse; font-size:11px; text-align:center; }
+        th { background-color:#2a1712; color:#ffffff; font-weight:600; padding:10px 6px; }
+        td { padding:10px 6px; border-bottom:1px solid #f3e7e1; color:#604d45; vertical-align: top; }
+        tr.total-row { background-color:#fbf7f4; font-weight:700; color:#2a1712; border-top:2px solid #d8c2b7; }
+        .case-card { background-color:#ffffff; border:1px solid #eadbd3; border-radius:16px; padding:16px; margin-bottom:12px; box-shadow:0 2px 4px rgba(73,36,24,.03); }
+        .case-header { display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #f3e7e1; padding-bottom:8px; margin-bottom:8px; gap:8px; }
+        .case-name { font-size:12px; font-weight:600; color:#2a1712; }
+        .case-badge { background-color:#fee2e2; color:#b91c1c; padding:2px 8px; border-radius:4px; font-size:9px; font-weight:600; white-space:nowrap; }
+        .case-badge.good { background-color:#dcfce7; color:#15803d; }
+        .case-badge.warn { background-color:#fef3c7; color:#b45309; }
+        .case-detail { font-size:11px; color:#604d45; margin-bottom:4px; }
+        .case-solution { font-size:11px; color:#7f3e2b; background-color:#fff7f2; padding:6px 10px; border-radius:8px; margin-top:8px; font-weight:500; }
+        .footer { text-align:center; font-size:9px; color:#a08b82; margin-top:40px; padding-top:16px; border-top:1px solid #eadbd3; }
+
+        /* Responsive Web Design layer */
+        html { -webkit-text-size-adjust: 100%; }
+        .container { width: min(100% - 32px, 1040px); padding: 0; }
+        .metrics-grid { display: grid; grid-template-columns: 1fr; gap: 12px; margin-bottom: 16px; }
+        .metrics-grid .card { margin-bottom: 0; min-height: 112px; }
+        .table-responsive { width: 100%; -webkit-overflow-scrolling: touch; }
+        .table-responsive table { min-width: 560px; }
+        .case-card { overflow-wrap: anywhere; }
+        @media (min-width: 640px) {
+            .banner-title { font-size: 26px; }
+            .banner-desc { font-size: 14px; }
+            .metrics-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+            .case-detail { font-size: 12px; }
+        }
+        @media (min-width: 1024px) {
+            .banner { padding: 40px 24px; }
+            .metrics-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+            .content-grid-2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+        }
+        @media (max-width: 420px) {
+            .container { width: min(100% - 20px, 1040px); }
+            .banner { padding: 26px 16px; }
+            .card { padding: 14px; }
+            .card-value { font-size: 19px; }
+            .icon-container { width: 40px; height: 40px; }
+            .case-header { align-items: flex-start; flex-direction: column; }
+            .case-badge { white-space: normal; }
+        }
+
+</style></head><body>
+<div class="banner"><div class="container"><p class="banner-subtitle">VIVE Clinic Dashboard</p><h1 class="banner-title">รายงานประสิทธิภาพโฆษณา & คุณภาพยอดทัก</h1><p class="banner-desc">สรุปผลโฆษณา วีเว่ คลินิก สาขาสรงประภา พร้อมเทียบคุณภาพยอดทักจากแชตจริง</p><div class="banner-tags"><span class="tag">📅 22 - 28 พ.ค. 2569</span><span class="tag">📌 ข้อมูลโฆษณา + ชีตจอง + แชตจริง</span></div></div></div>
+<div class="container">
+<div class="section-title"><div class="title-indicator"></div><h2>สรุปผลลัพธ์สะสม (7 วัน)</h2></div>
+<div class="metrics-grid">
+<div class="card"><div class="card-content"><span class="card-label">งบโฆษณาที่ใช้จริง</span><span class="card-value">29,222.72 <span style="font-size:12px; font-weight:400;">฿</span></span><span class="card-subtext">ช่วง 22–28 พ.ค. 2569</span></div><div class="icon-container icon-blue"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg></div></div>
+<div class="card"><div class="card-content"><span class="card-label">จำนวนการทักแชตจากโฆษณา</span><span class="card-value">209 <span style="font-size:12px; font-weight:400;">ข้อความ</span></span><span class="card-subtext">ราคาต่อข้อความเฉลี่ย 139.82 ฿</span></div><div class="icon-container icon-indigo"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path></svg></div></div>
+<div class="card"><div class="card-content"><span class="card-label">ยอดจองจากชีต</span><span class="card-value">49 <span style="font-size:12px; font-weight:400;">เคส</span></span><span class="card-subtext green">เทียบกับข้อความโฆษณา = 23.4%</span></div><div class="icon-container icon-emerald"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg></div></div>
+<div class="card"><div class="card-content"><span class="card-label">แชตคุยจริงที่อ่านได้</span><span class="card-value">167 <span style="font-size:12px; font-weight:400;">เคส</span></span><span class="card-subtext">ใช้พิสูจน์คุณภาพยอดทัก</span></div><div class="icon-container icon-orange"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg></div></div>
+</div>
+<div class="section-title"><div class="title-indicator emerald"></div><h2>ตารางสรุปผลโฆษณา (Full-Funnel)</h2></div>
+<div class="table-card"><div class="table-responsive"><table><thead><tr><th>รายการ</th><th>ผลลัพธ์</th><th>อัตรา/ความหมาย</th></tr></thead><tbody>
+<tr><td style="font-weight:600;color:#2a1712;">Spend</td><td>29,222.72 บาท</td><td>งบโฆษณารวม</td></tr>
+<tr><td style="font-weight:600;color:#2a1712;">Messages</td><td style="font-weight:600;">209 ข้อความ</td><td>Cost/Message = 139.82 บาท</td></tr>
+<tr><td style="font-weight:600;color:#2a1712;">Reach / Impressions</td><td>84,365 / 209,577</td><td>ความถี่เฉลี่ยประมาณ 2.48 ครั้ง/คน</td></tr>
+<tr><td style="font-weight:600;color:#2a1712;">Clicks</td><td>2,951 คลิก</td><td>CTR รวม 1.41%; Click-to-Message 7.1%</td></tr>
+<tr><td style="font-weight:600;color:#2a1712;">Bookings</td><td style="color:#10b981;font-weight:600;">49 เคส</td><td>49 จาก 209 ข้อความ = 23.4%</td></tr>
+<tr class="total-row"><td>สรุป</td><td>ยอดทักมีคุณภาพพอปิดได้</td><td>ควรเพิ่มการปิดหลังแจ้งโปรและแยกครีเอทีฟตามความตั้งใจซื้อ</td></tr>
+</tbody></table></div></div>
+<div class="section-title"><div class="title-indicator orange"></div><h2>แยกตามแคมเปญ + คุยจริง</h2></div>
+<div class="table-card"><div class="table-responsive"><table><thead><tr><th>แคมเปญ</th><th>งบ</th><th>ข้อความ</th><th>คุยจริง</th><th>อัตราคุยจริง</th><th>ราคา/คุยจริง</th></tr></thead><tbody>
+<tr><td style="font-weight:600;color:#2a1712;">โปรรวม 2,990</td><td>14,017.49</td><td>69</td><td style="color:#10b981;font-weight:700;">46</td><td>66.7%</td><td>304.73</td></tr>
+<tr><td style="font-weight:600;color:#2a1712;">โปรฉีดฝ้า 990</td><td>8,154.52</td><td>95</td><td style="color:#10b981;font-weight:700;">71</td><td style="color:#10b981;font-weight:700;">74.7%</td><td style="color:#10b981;font-weight:700;">114.85</td></tr>
+<tr><td style="font-weight:600;color:#2a1712;">โปรรวม 2,990 ชุดที่ 2</td><td>7,050.71</td><td>45</td><td style="color:#10b981;font-weight:700;">36</td><td style="color:#10b981;font-weight:700;">80.0%</td><td>195.85</td></tr>
+<tr class="total-row"><td>รวม</td><td>29,222.72</td><td>209</td><td>153</td><td>73.2%</td><td>191.00</td></tr>
+</tbody></table></div></div>
+<div class="case-card"><p class="case-detail"><strong>หมายเหตุคุยจริง:</strong> ใช้ตัวชี้วัด Messenger First Reply ของ Meta เพื่อดูจำนวนแชตที่มีการคุยตอบกลับจริง ไม่ใช้ยอดรวม event ซ้ำอย่าง total messaging connection</p></div>
+<div class="section-title"><div class="title-indicator emerald"></div><h2>วิเคราะห์คุณภาพยอดทักหน้างานจริง 5 ประเด็น</h2></div>
+<div class="case-card"><p class="case-detail">✅ ยอดทักหลังบ้าน 209 ข้อความ แต่แชตคุยจริงที่อ่านได้ 167 เคส จึงต้องใช้แชตจริงคัดคุณภาพ ไม่ดูหลังบ้านอย่างเดียว</p></div><div class="case-card"><p class="case-detail">✅ มีแชตที่ถามโปรและราคาเยอะ สะท้อนว่าครีเอทีฟดึงคนสนใจราคาได้ดี แต่ต้องเร่งปิดนัดหลังแจ้งโปร</p></div><div class="case-card"><p class="case-detail">✅ ยอดจอง 49 เคส จากแชตคุยจริง 167 เคส คิดเป็น 29.3% ถือว่ามีคุณภาพพอปิดได้</p></div><div class="case-card"><p class="case-detail">✅ พบยอดจองที่จับกับเลขท้ายเบอร์ในแชตได้ 37 เคส หรือ 75.5% แปลว่ามียอดจากแชตจริงชัดเจน</p></div><div class="case-card"><p class="case-detail">✅ ยังมี 12 เคส หรือ 24.5% ที่อาจมาจากการย้ายช่องทางหรือกรอกเบอร์ไม่ครบ ควรบังคับเก็บเบอร์ในแชต</p></div>
+<div class="section-title"><div class="title-indicator red"></div><h2>เหตุผลที่ลูกค้ายังไม่โอนจอง 5 ประเด็น</h2></div>
+<div class="case-card"><div class="case-header"><span class="case-name">ถามราคาและรายละเอียดโปรก่อนตัดสินใจ</span><span class="case-badge warn">ต้องติดตาม</span></div><p class="case-detail">พบจำนวนมากในแชตที่เริ่มจากโฆษณา ลูกค้ามักถามความคุ้มค่าและรายการที่รวมในโปร</p></div><div class="case-card"><div class="case-header"><span class="case-name">ต้องการเช็กคิวหรือความสะดวกก่อนโอน</span><span class="case-badge warn">ต้องติดตาม</span></div><p class="case-detail">มีลูกค้าถามวันและเวลาว่างก่อน เช่น เสาร์/อาทิตย์หรือช่วงเย็น</p></div><div class="case-card"><div class="case-header"><span class="case-name">กังวลเรื่องความเจ็บและขั้นตอนรักษา</span><span class="case-badge warn">ต้องติดตาม</span></div><p class="case-detail">พบคำถามเรื่องเจ็บ กลัวเข็ม และความกังวลก่อนเข้ารับบริการ</p></div><div class="case-card"><div class="case-header"><span class="case-name">ย้ายไปชำระที่สาขา</span><span class="case-badge warn">ต้องติดตาม</span></div><p class="case-detail">ในชีตมี 7 จาก 49 เคส หรือ 14.3% ที่ระบุชำระที่สาขา</p></div><div class="case-card"><div class="case-header"><span class="case-name">ข้อมูลเบอร์ในแชตไม่ครบหรือปิดการขายข้ามช่องทาง</span><span class="case-badge warn">ต้องติดตาม</span></div><p class="case-detail">มียอดจอง 12 จาก 49 เคส หรือ 24.5% ที่ยังไม่พบเลขท้ายเบอร์ในแชตที่ดึงได้</p></div>
+<div class="section-title"><div class="title-indicator orange"></div><h2>ตัวอย่างจากแชตจริง</h2></div>
+<div class="case-card"><div class="case-header"><span class="case-name">Lucky Lucky</span><span class="case-badge warn">22/05/26 02:55</span></div><p class="case-detail"><strong>ประเด็น:</strong> ราคา/โปรโมชัน — ลูกค้าตอบกลับโฆษณาและสนใจโปร เหมาะกับสคริปต์สรุปโปรสั้น + ถามปิดคิวทันที</p></div>
+<div class="case-card"><div class="case-header"><span class="case-name">Aum Duangporn Detphukaew</span><span class="case-badge warn">22/05/26 21:42</span></div><p class="case-detail"><strong>ประเด็น:</strong> ขอคิดก่อน/เช็กคิว — ลูกค้าถามวันเสาร์และเวลาว่าง ควรส่งช่วงคิวให้เลือกแทนการรอลูกค้าตัดสินใจเอง</p></div>
+<div class="case-card"><div class="case-header"><span class="case-name">ไม่ดี ไม่จำ</span><span class="case-badge warn">24/05/26 16:28</span></div><p class="case-detail"><strong>ประเด็น:</strong> กลัวเจ็บ/กังวล — ควรเพิ่มครีเอทีฟและสคริปต์ตอบข้อกังวล “กลัวเจ็บ/ไม่เคยทำ”</p></div>
+<div class="section-title"><div class="title-indicator emerald"></div><h2>ข้อเสนอแนะทีมยิงแอด 5 ประเด็น</h2></div>
+<div class="case-card"><p class="case-detail">✅ แยกงบโปร 990 และ 2,990 ให้ชัด เพราะพฤติกรรมลูกค้าต่างกัน: โปร 990 สร้างข้อความถูกกว่า แต่โปร 2,990 มีมูลค่าต่อเคสสูงกว่า</p></div><div class="case-card"><p class="case-detail">✅ เพิ่มครีเอทีฟตอบข้อกังวล “กลัวเจ็บ/ไม่เคยทำ” เพื่อลดการลังเลก่อนโอน</p></div><div class="case-card"><p class="case-detail">✅ ทำชุดโฆษณารีมาร์เก็ตติ้งสำหรับคนทักแล้วไม่โอนภายใน 1–3 วัน</p></div><div class="case-card"><p class="case-detail">✅ ใส่ข้อความชวนปิดคิวในโฆษณาให้ตรงกับสคริปต์แอดมิน เช่น “จองคิวรับสิทธิ์”</p></div><div class="case-card"><p class="case-detail">✅ แยกรายงานคุณภาพแชตตามแคมเปญทุกสัปดาห์ เพื่อดูว่าแคมเปญไหนได้คนพร้อมจองจริง ไม่ใช่แค่ข้อความถูก</p></div>
+<div class="footer"><p>หมายเหตุ: รายงานนี้อ่านจากประวัติแชตจริง กระทบยอดกับชีตปิดโอนจอง และข้อมูลหลังบ้านโฆษณาในช่วงวันที่กำหนด</p><p style="margin-top:4px;">© 2026 VIVE Clinic. LEO REPORT SYSTEM</p></div>
+</div></body></html>
